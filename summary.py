@@ -139,15 +139,15 @@ def generateSummaryReadings(readings=None):
 
     return readings
 
-def createSummaryUptimeGraphs(rrd=None):
+def createUptimeGraphs(rrd=None):
     watermark = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f - CEST")
 
     dictionary = {
-        'SUMMARY_1h.png' : '-1h',
-        'SUMMARY_12h.png' : '-12h',
-        'SUMMARY_1d.png' : '-1d',
-        'SUMMARY_1w.png' : '-1w',
-        'SUMMARY_1m.png' : '-1m'
+        'SUMMARY_Uptime_1h.png' : '-1h',
+        'SUMMARY_Uptime_12h.png' : '-12h',
+        'SUMMARY_Uptime_1d.png' : '-1d',
+        'SUMMARY_Uptime_1w.png' : '-1w',
+        'SUMMARY_Uptime_1m.png' : '-1m'
     }
 
     for key, value in dictionary.iteritems():
@@ -156,7 +156,6 @@ def createSummaryUptimeGraphs(rrd=None):
             '--imgformat', 'PNG',
             '--slope-mode',
             '--width', '500',
-#            '--height', '120',
             '--height', '150',
             '--start', '%s' % value,
             '--end', 'now',
@@ -166,10 +165,157 @@ def createSummaryUptimeGraphs(rrd=None):
             '--watermark', watermark,
             'DEF:Elapsed=%s:Elapsed:AVERAGE' % rrd,
             'CDEF:Uptime=Elapsed,86400,/',
-            'AREA:Uptime#00FF00',
-            'LINE1:Uptime#0000FF:Uptime',
+            'AREA:Uptime#A4A4A4',
+            'LINE1:Uptime#000000:Uptime',
             'GPRINT:Uptime:LAST:Last\: %5.2lf',
             'GPRINT:Uptime:MIN:Min\: %5.2lf',
             'GPRINT:Uptime:AVERAGE:Avg\: %5.2lf',
             'GPRINT:Uptime:MAX:Max\: %5.2lf'
             )
+
+def createLastgetworkGraphs(rrd=None):
+    watermark = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f - CEST")
+
+    dictionary = {
+        'SUMMARY_Lastgetwork_1h.png' : '-1h',
+        'SUMMARY_Lastgetwork_12h.png' : '-12h',
+        'SUMMARY_Lastgetwork_1d.png' : '-1d',
+        'SUMMARY_Lastgetwork_1w.png' : '-1w',
+        'SUMMARY_Lastgetwork_1m.png' : '-1m'
+    }
+
+    for key, value in dictionary.iteritems():
+        print key, value
+        rrdtool.graph(key,
+            '--imgformat', 'PNG',
+            '--slope-mode',
+            '--width', '500',
+            '--height', '150',
+            '--start', '%s' % value,
+            '--end', 'now',
+            '--vertical-label', 'Seconds',
+            '--title', 'SUMMARY - Last getwork',
+            '--alt-y-grid', '--rigid',
+            '--watermark', watermark,
+            'DEF:Lastgetwork=%s:Lastgetwork:AVERAGE' % rrd,
+            'AREA:Lastgetwork#A4A4A4',
+            'LINE1:Lastgetwork#000000:Lastgetwork',
+            'GPRINT:Lastgetwork:LAST:Last\: %10.0lf',
+            'GPRINT:Lastgetwork:MIN:Min\: %10.0lf',
+            'GPRINT:Lastgetwork:AVERAGE:Avg\: %10.0lf',
+            'GPRINT:Lastgetwork:MAX:Max\: %10.0lf'
+            )
+
+def createMHSGraphs(rrd=None):
+    watermark = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f - CEST")
+
+    dictionary = {
+        'SUMMARY_MHS_1h.png' : '-1h',
+        'SUMMARY_MHS_12h.png' : '-12h',
+        'SUMMARY_MHS_1d.png' : '-1d',
+        'SUMMARY_MHS_1w.png' : '-1w',
+        'SUMMARY_MHS_1m.png' : '-1m'
+    }
+
+    for key, value in dictionary.iteritems():
+        print key, value
+        rrdtool.graph(key,
+            '--imgformat', 'PNG',
+            '--width', '500',
+            '--height', '150',
+            '--start', '%s' % value,
+            '--end', 'now',
+            '--vertical-label', 'MH/s',
+            '--title', 'SUMMARY - Hashrate',
+            '--alt-y-grid', '--rigid',
+            '--watermark', watermark,
+            'DEF:MHS1m=%s:MHS1m:AVERAGE' % rrd,
+            'DEF:MHS5m=%s:MHS5m:AVERAGE' % rrd,
+            'DEF:MHS15m=%s:MHS15m:AVERAGE' % rrd,
+            'DEF:MHSav=%s:MHSav:AVERAGE' % rrd,
+            'AREA:MHS1m#FF0000:MHS1m',
+            'GPRINT:MHS1m:LAST:\tLast\: %5.2lf %s',
+            'GPRINT:MHS1m:MIN:Min\: %5.2lf %s',
+            'GPRINT:MHS1m:AVERAGE:Avg\: %5.2lf %s',
+            'GPRINT:MHS1m:MAX:Max\: %5.2lf %s\\n',
+            'AREA:MHS5m#FF9900:MHS5m',
+            'GPRINT:MHS5m:LAST:\tLast\: %5.2lf %s',
+            'GPRINT:MHS5m:MIN:Min\: %5.2lf %s',
+            'GPRINT:MHS5m:AVERAGE:Avg\: %5.2lf %s',
+            'GPRINT:MHS5m:MAX:Max\: %5.2lf %s\\n',            
+            'AREA:MHS15m#FFFF00:MHS15m',
+            'GPRINT:MHS15m:LAST:Last\: %5.2lf %s',
+            'GPRINT:MHS15m:MIN:Min\: %5.2lf %s',
+            'GPRINT:MHS15m:AVERAGE:Avg\: %5.2lf %s',
+            'GPRINT:MHS15m:MAX:Max\: %5.2lf %s',
+            'LINE1:MHS5m#FF9900',
+            'LINE1:MHS1m#FF0000',
+            'LINE2:MHSav#000000::dashes'
+            )
+
+def createEfficiencyGraphs(rrd=None):
+    watermark = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f - CEST")
+
+    dictionary = {
+        'SUMMARY_Efficiency_1h.png' : '-1h',
+        'SUMMARY_Efficiency_12h.png' : '-12h',
+        'SUMMARY_Efficiency_1d.png' : '-1d',
+        'SUMMARY_Efficiency_1w.png' : '-1w',
+        'SUMMARY_Efficiency_1m.png' : '-1m'
+    }
+
+    for key, value in dictionary.iteritems():
+        print key, value
+        rrdtool.graph(key,
+            '--imgformat', 'PNG',
+            '--width', '500',
+            '--height', '150',
+            '--start', '%s' % value,
+            '--end', 'now',
+            '--vertical-label', 'Percent',
+            '--title', 'SUMMARY - Efficiency -- (WU/m)/(KH/s)',
+            '--alt-y-grid', '--rigid',
+            '--watermark', watermark,
+            'DEF:MHSav=%s:MHSav:AVERAGE' % rrd,
+            'DEF:WorkUtility=%s:WorkUtility:AVERAGE' % rrd,
+            'CDEF:Efficiency=MHSav,WorkUtility,/',
+            'AREA:Efficiency#E6E6FF:Efficiency',
+            'LINE1:Efficiency#0000FF',
+            'GPRINT:Efficiency:LAST:\tLast\: %5.2lf %s',
+            'GPRINT:Efficiency:MIN:Min\: %5.2lf %s',
+            'GPRINT:Efficiency:AVERAGE:Avg\: %5.2lf %s',
+            'GPRINT:Efficiency:MAX:Max\: %5.2lf %s\\n',
+            )
+
+def createBestShareGraphs(rrd=None):
+    watermark = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f - CEST")
+
+    dictionary = {
+        'SUMMARY_BestShare_1h.png' : '-1h',
+        'SUMMARY_BestShare_12h.png' : '-12h',
+        'SUMMARY_BestShare_1d.png' : '-1d',
+        'SUMMARY_BestShare_1w.png' : '-1w',
+        'SUMMARY_BestShare_1m.png' : '-1m'
+    }
+
+    for key, value in dictionary.iteritems():
+        print key, value
+        rrdtool.graph(key,
+            '--imgformat', 'PNG',
+            '--width', '500',
+            '--height', '150',
+            '--start', '%s' % value,
+            '--end', 'now',
+            '--vertical-label', '???',
+            '--title', 'SUMMARY - Best Share',
+            '--alt-y-grid', '--rigid',
+            '--watermark', watermark,
+            'DEF:BestShare=%s:BestShare:AVERAGE' % rrd,
+            'AREA:BestShare#E6E6FF:BestShare',
+            'LINE1:BestShare#0000FF',
+            'GPRINT:BestShare:LAST:\tLast\: %5.2lf %s',
+            'GPRINT:BestShare:MIN:Min\: %5.2lf %s',
+            'GPRINT:BestShare:AVERAGE:Avg\: %5.2lf %s',
+            'GPRINT:BestShare:MAX:Max\: %5.2lf %s\\n',
+            )
+

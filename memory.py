@@ -95,11 +95,11 @@ def createMemoryGraphs(rrd=None):
     watermark = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f - CEST")
 
     dictionary = {
-        'MEMORY_Uptime_1h.png' : '-1h',
-        'MEMORY_Uptime_12h.png' : '-12h',
-        'MEMORY_Uptime_1d.png' : '-1d',
-        'MEMORY_Uptime_1w.png' : '-1w',
-        'MEMORY_Uptime_1m.png' : '-1m'
+        'MEMORY_Memory_1h.png' : '-1h',
+        'MEMORY_Memory_12h.png' : '-12h',
+        'MEMORY_Memory_1d.png' : '-1d',
+        'MEMORY_Memory_1w.png' : '-1w',
+        'MEMORY_Memory_1m.png' : '-1m'
     }
 
     for key, value in dictionary.iteritems():

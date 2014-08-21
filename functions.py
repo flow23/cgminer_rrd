@@ -32,6 +32,22 @@ def getASICDevicesCount():
 
     return ascCount
 
+def getASICDevice(device=None):
+    if device is not None:
+        asc = getCgminerFactory().asc(device)
+        device = asc['ASC'][0]
+
+    return device
+
+def getCoin():
+   cgm = getCgminerFactory()
+
+   coin = cgm.coin()
+   coin = coin['COIN']
+   coin = coin[0]
+
+   return coin
+
 def generateTemplate(attributes=None):
     if attributes is None:
         print 'Nono'

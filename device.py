@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import functions
+import datetime
 import rrdtool
 import os.path
 from pycgminer import CgminerAPI
@@ -123,3 +124,48 @@ def generateDeviceReadings(readings=None):
         print 'FUCK'
 
     return readings
+
+def createTemperatureGraphs(device=None, rrd=None):
+    watermark = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f - CEST")
+
+    dictionary = {
+        'DEVICE_%s_Temperature_1h.png' % device : '-1h',
+        'DEVICE_%s_Temperature_12h.png' % device : '-12h',
+        'DEVICE_%s_Temperature_1d.png' % device : '-1d',
+        'DEVICE_%s_Temperature_1w.png' % device : '-1w',
+        'DEVICE_%s_Temperature_1m.png' % device : '-1m'
+    }
+
+    for key, value in dictionary.iteritems():
+        print key, value
+        rrdtool.graph(key,
+            '--imgformat', 'PNG',
+            '--width', '500',
+            '--height', '150',
+            '--start', '%s' % value,
+            '--end', 'now',
+            '--vertical-label', 'Celsius',
+            '--title', 'DEVICE %s - Temperature' % device,
+            '--alt-y-grid', '--rigid',
+            '--lower-limit', '0',
+            '--watermark', watermark,
+            'DEF:Temperature=%s:Temperature:AVERAGE' % rrd,
+            # <30
+            'CDEF:cold=Temperature,30,LT,Temperature,UNKN,IF',
+            # >65
+            'CDEF:hot=Temperature,65,GT,Temperature,UNKN,IF',
+            'CDEF:between=Temperature,66,LT,Temperature,UNKN,IF',
+            # 30<>65
+            'CDEF:ideal=between,0,GT,between,UNKN,IF',
+            'LINE1:Temperature#000000:Temperature',
+            'AREA:hot#FFE6E6',
+            'LINE2:hot#FF0000',
+            'AREA:ideal#E6FFE6',
+            'LINE2:ideal#00FF00',
+            'AREA:cold#E6E6FF',
+            'LINE2:cold#0000FF',
+            'GPRINT:Temperature:LAST:Last\: %5.2lf',
+            'GPRINT:Temperature:MIN:Min\: %5.2lf',
+            'GPRINT:Temperature:AVERAGE:Avg\: %5.2lf',
+            'GPRINT:Temperature:MAX:Max\: %5.2lf'
+            )
